@@ -1,0 +1,662 @@
+PROGRAM TUGASAKHIRSIMPANPINJAMKOPERASIByFauzan
+
+IMPORT java.util.*
+IMPORT java.io.*
+IMPORT java.text.SimpleDateFormat
+IMPORT java.util.Date
+
+DEKLARASI formatter SEBAGAI SimpleDateFormat DENGAN FORMAT "yyyy-MM-dd HH:mm"
+DEKLARASI date SEBAGAI Date
+DEKLARASI input SEBAGAI Scanner
+DEKLARASI listAnggota SEBAGAI ArrayList<Object[]>
+DEKLARASI listSimpan SEBAGAI ArrayList<Object[]>
+DEKLARASI listPinjaman SEBAGAI ArrayList<Object[]>
+DEKLARASI running SEBAGAI boolean DENGAN NILAI true
+
+FUNCTION main()
+    DEKLARASI loggedIn SEBAGAI boolean DENGAN NILAI false
+    
+    TAMPILKAN "===== APLIKASI SIMPAN PINJAM ====="
+    TAMPILKAN "Silahkan login terlebih dahulu :3"
+    
+    WHILE NOT loggedIn DO
+        TAMPILKAN "Username >> "
+        INPUT username
+        TAMPILKAN "Password >> "
+        INPUT password
+        
+        IF username == "Admin" AND password == "admin" THEN
+            loggedIn = true
+            clearScreen()
+            DO
+                mainMenu()
+            WHILE running
+        ELSE
+            TAMPILKAN "Username dan password salah! Aplikasi akan ditutup"
+            EXIT
+        ENDIF
+    ENDWHILE
+END FUNCTION
+
+FUNCTION mainMenu()
+    TAMPILKAN "===== MENU SIMPAN PINJAM ====="
+    TAMPILKAN "[1] Anggota"
+    TAMPILKAN "[2] Simpan"
+    TAMPILKAN "[3] Pinjaman"
+    TAMPILKAN "[4] Info"
+    TAMPILKAN "[0] Exit"
+    TAMPILKAN ">>> "
+    
+    DEKLARASI selMainMenu SEBAGAI integer DENGAN NILAI validIntInput()
+    
+    SWITCH selMainMenu DO
+        CASE 1:
+            clearScreen()
+            menuAnggota()
+        CASE 2:
+            clearScreen()
+            menuSimpanan()
+        CASE 3:
+            clearScreen()
+            menuPinjaman()
+        CASE 4:
+            clearScreen()
+            informasiProgram()
+        CASE 0:
+            TAMPILKAN "Terimakasih dan sampai jumpa!"
+            EXIT
+        DEFAULT:
+            clearScreen()
+            TAMPILKAN "Pilihan tidak valid. Silakan coba lagi."
+            mainMenu()
+    END SWITCH
+END FUNCTION
+
+FUNCTION listAnggota()
+    IF listAnggota.isEmpty() THEN
+        TAMPILKAN "List anggota kosong, silahkan tambah terlebih dahulu :)"
+    ELSE
+        TAMPILKAN header tabel anggota
+        FOR i FROM 0 TO listAnggota.size() - 1 DO
+            DEKLARASI dataAnggota SEBAGAI Object[] DARI listAnggota.get(i)
+            TAMPILKAN data anggota
+        ENDFOR
+    ENDIF
+END FUNCTION
+
+FUNCTION menuAnggota()
+    TAMPILKAN "====="
+    listAnggota()
+    TAMPILKAN "====="
+    TAMPILKAN "[1] Tambah Anggota"
+    TAMPILKAN "[2] Edit Anggota"
+    TAMPILKAN "[3] Remove Anggota"
+    TAMPILKAN "[0] Kembali Ke Menu Utama"
+    TAMPILKAN "====="
+    TAMPILKAN ">>> "
+    
+    DEKLARASI selMenuAnggota SEBAGAI integer DENGAN NILAI validIntInput()
+    
+    SWITCH selMenuAnggota DO
+        CASE 1:
+            input.nextLine()
+            clearScreen()
+            addAnggota()
+        CASE 2:
+            clearScreen()
+            editAnggota()
+        CASE 3:
+            clearScreen()
+            removeAnggota()
+        CASE 0:
+            clearScreen()
+            mainMenu()
+        DEFAULT:
+            clearScreen()
+            TAMPILKAN "Pilihan tidak valid. Silakan coba lagi."
+            menuAnggota()
+    END SWITCH
+END FUNCTION
+
+FUNCTION addAnggota()
+    DEKLARASI addDataAnggotaRunning SEBAGAI boolean DENGAN NILAI true
+    
+    WHILE addDataAnggotaRunning DO
+        clearScreen()
+        INPUT namaAnggota
+        INPUT nikAnggota
+        INPUT alamatAnggota
+        INPUT jenisKelaminAnggota
+        
+        IF jenisKelaminAnggota NOT IN ["Laki-Laki", "Perempuan"] THEN
+            clearScreen()
+            TAMPILKAN "Jenis Kelamin Tidak Valid!"
+            menuAnggota()
+        ENDIF
+        
+        INPUT noTeleponAnggota
+        INPUT email String currentDate = formatter.format(new Date())
+        
+        DEKLARASI dataAnggota SEBAGAI Object[] DENGAN NILAI {namaAnggota, nikAnggota, alamatAnggota, jenisKelaminAnggota, noTeleponAnggota, emailAnggota, currentDate}
+        listAnggota.add(dataAnggota)
+        
+        clearScreen()
+        TAMPILKAN "Apakah anda ingin menambankan data lagi? [y/t]"
+        INPUT jawabYt
+        IF jawabYt == "t" THEN
+            addDataAnggotaRunning = false
+        ENDIF
+    ENDWHILE
+    clearScreen()
+    TAMPILKAN "Anggota telah ditambahkan :)"
+    menuAnggota()
+END FUNCTION
+
+FUNCTION editAnggota()
+    IF listAnggota.isEmpty() THEN
+        TAMPILKAN "[ List anggota kosong, silahkan tambah terlebih dahulu :) ]"
+        menuAnggota()
+    ELSE
+        listAnggota()
+        TAMPILKAN "Pilih anggota yang ingin diedit."
+        INPUT selEditAnggota
+        
+        DEKLARASI indexEditData SEBAGAI integer DENGAN NILAI selEditAnggota - 1
+        
+        IF indexEditData < 0 OR indexEditData >= listAnggota.size() THEN
+            clearScreen()
+            TAMPILKAN "Anggota tidak valid. Silakan coba lagi."
+            menuAnggota()
+            RETURN
+        ENDIF
+        
+        DEKLARASI dataAnggota SEBAGAI Object[] DARI listAnggota.get(indexEditData)
+        
+        DEKLARASI editDataAnggotaRunning SEBAGAI boolean DENGAN NILAI true
+        
+        WHILE editDataAnggotaRunning DO
+            clearScreen()
+            TAMPILKAN data anggota yang dipilih
+            TAMPILKAN "Pilih atribut yang ingin diedit:"
+            INPUT selEditAtribut
+            
+            SWITCH selEditAtribut DO
+                CASE 1:
+                    INPUT namaAnggota
+                    dataAnggota[0] = namaAnggota
+                CASE 2:
+                    INPUT nikAnggota
+                    dataAnggota[1] = nikAnggota
+                CASE 3:
+                    INPUT alamatAnggota
+                    dataAnggota[2] = alamatAnggota
+                CASE 4:
+                    INPUT jenisKelaminAnggota
+                    IF jenisKelaminAnggota IN ["Laki-Laki", "Perempuan"] THEN
+                        dataAnggota[3] = jenisKelaminAnggota
+                    ELSE
+                        TAMPILKAN "Jenis Kelamin Tidak Valid!"
+                    ENDIF
+                CASE 5:
+                    INPUT noTeleponAnggota
+                    dataAnggota[4] = noTeleponAnggota
+                CASE 6:
+                    INPUT emailAnggota
+                    dataAnggota[5] = emailAnggota
+                DEFAULT:
+                    TAMPILKAN "Pilihan tidak valid. Tidak ada perubahan yang dilakukan."
+            END SWITCH
+            
+            clearScreen()
+            TAMPILKAN "Apakah anda ingin mengubah data lagi? [y/t]"
+            INPUT jawabYt
+            IF jawabYt == "t" THEN
+                editDataAnggotaRunning = false
+            ENDIF
+        ENDWHILE
+        
+        clearScreen()
+        TAMPILKAN "Data anggota telah diperbarui."
+        menuAnggota()
+    ENDIF
+END FUNCTION
+
+FUNCTION removeAnggota()
+    IF listAnggota.isEmpty() THEN
+        TAMPILKAN "[ List anggota kosong, silahkan tambah terlebih dahulu :) ]"
+        menuAnggota()
+    ELSE
+        listAnggota()
+        TAMPILKAN "Pilih anggota yang ingin di hapus."
+        INPUT selRemoveAnggota
+        
+        DEKLARASI indexRemoveData SEBAGAI integer DENGAN NILAI selRemoveAnggota - 1
+        
+        IF indexRemoveData < 0 OR indexRemoveData >= listAnggota.size() THEN
+            clearScreen()
+            TAMPILKAN "Anggota tidak valid. Silakan coba lagi."
+            menuAnggota()
+        ELSE
+            listAnggota.remove(indexRemoveData)
+        ENDIF
+        
+        clearScreen()
+        menuAnggota()
+    ENDIF
+END FUNCTION
+
+FUNCTION listSimpanan()
+    IF listSimpan.isEmpty() THEN
+        TAMPILKAN "List simpan kosong, silahkan tambah terlebih dahulu :)"
+    ELSE
+        TAMPILKAN header tabel simpanan
+        DEKLARASI totJumlahSimpanan SEBAGAI double DENGAN NILAI 0
+        
+        FOR i FROM 0 TO listSimpan.size() - 1 DO
+            DEKLARASI dataSimpanan SEBAGAI Object[] DARI listSimpan.get(i)
+            totJumlahSimpanan += (double) dataSimpanan[2]
+            TAMPILKAN data simpanan
+        ENDFOR
+        
+        TAMPILKAN total simpanan
+    ENDIF
+END FUNCTION
+
+FUNCTION menuSimpanan()
+    TAMPILKAN "====="
+    listSimpanan()
+    TAMPILKAN "====="
+    TAMPILKAN "[1] Tambah Simpanan"
+    TAMPILKAN "[2] Edit Simpanan"
+    TAMPILKAN "[3] Remove Simpanan"
+    TAMPILKAN "[0] Kembali Ke Menu Utama"
+    TAMPILKAN "====="
+    TAMPILKAN ">>> "
+    
+    DEKLARASI selMenuSimpanan SEBAGAI integer DENGAN NILAI validIntInput()
+    
+    SWITCH selMenuSimpanan DO
+        CASE 1:
+            clearScreen()
+            input.nextLine()
+            addSimpanan()
+        CASE 2:
+            clearScreen()
+            editSimpanan()
+        CASE 3:
+            clearScreen()
+            removeSimpanan()
+        CASE 0:
+            clearScreen()
+            mainMenu()
+        DEFAULT:
+            clearScreen()
+            TAMPILKAN "Pilihan tidak valid. Silakan coba lagi."
+            menuSimpanan()
+    END SWITCH
+END FUNCTION
+
+FUNCTION addSimpanan()
+    IF listAnggota.isEmpty() THEN
+        TAMPILKAN "[ List anggota kosong, silahkan tambah terlebih dahulu :) ]"
+        menuSimpanan()
+    ELSE
+        DEKLARASI addDataSimpananRunning SEBAGAI boolean DENGAN NILAI true
+        
+        WHILE addDataSimpananRunning DO
+            listAnggota()
+            INPUT selAnggotaSimpanan
+            
+            DEKLARASI indexSelAnggotaSimpanan SEBAGAI integer DENGAN NILAI selAnggotaSimpanan - 1
+            
+            IF indexSelAnggotaSimpanan < 0 OR indexSelAnggotaSimpanan >= listAnggota.size() THEN
+                clearScreen()
+                TAMPILKAN "Anggota tidak valid. Silakan coba lagi."
+                menuSimpanan()
+                RETURN
+            ENDIF
+            
+            DEKLARASI dataAnggota SEBAGAI Object[] DARI listAnggota.get(indexSelAnggotaSimpanan)
+            INPUT jumlahSimpanan
+            
+            String currentDate = formatter.format(new Date())
+            
+            DEKLARASI dataSimpanan SEBAGAI Object[] DENGAN NILAI {dataAnggota[0], dataAnggota[1], jumlahSimpanan, currentDate}
+            listSimpan.add(dataSimpanan)
+            
+            clearScreen()
+            TAMPILKAN "Simpanan telah ditambahkan."
+            TAMPILKAN "Apakah anda ingin menambankan data lagi? [y/t]"
+            INPUT jawabYt
+            IF jawabYt == "t" THEN
+                addDataSimpananRunning = false
+            ENDIF
+        ENDWHILE
+        clearScreen()
+        menuSimpanan()
+    ENDIF
+END FUNCTION
+
+FUNCTION editSimpanan()
+    IF listSimpan.isEmpty() THEN
+        TAMPILKAN "[ List simpanan kosong, silahkan tambah terlebih dahulu :) ]"
+        menuSimpanan()
+    ELSE
+        listSimpanan()
+        INPUT selEditSimpanan
+        
+        DEKLARASI indexEditData SEBAGAI integer DENGAN NILAI selEditSimpanan - 1
+        
+        IF indexEditData < 0 OR indexEditData >= listSimpan.size() THEN
+            clearScreen()
+            TAMPILKAN "Simpanan tidak valid. Silakan coba lagi."
+            menuSimpanan()
+        ENDIF
+        
+        DEKLARASI dataSimpanan SEBAGAI Object[] DARI listSimpan.get(indexEditData)
+        clearScreen()
+        
+        DEKLARASI editDataSimpananRunning SEBAGAI boolean DENGAN NILAI true
+        
+        WHILE editDataSimpananRunning DO
+            TAMPILKAN data simpanan yang dipilih
+            INPUT selEditAtribut
+            
+            SWITCH selEditAtribut DO
+                CASE 1:
+                    listAnggota()
+                    INPUT selAnggota
+                    DEKLARASI indexAnggota SEBAGAI integer DENGAN NILAI selAnggota - 1
+                    
+                    IF indexAnggota < 0 OR indexAnggota >= listAnggota.size() THEN
+                        TAMPILKAN "Anggota tidak valid. Tidak ada perubahan yang dilakukan."
+                    ELSE
+                        DEKLARASI dataAnggota SEBAGAI Object[] DARI listAnggota.get(indexAnggota)
+                        dataSimpanan[0] = dataAnggota[0]
+                        dataSimpanan[1] = dataAnggota[1]
+                    ENDIF
+                CASE 2:
+                    INPUT jumlahSimpanan
+                    dataSimpanan[2] = jumlahSimpanan
+                DEFAULT:
+                    TAMPILKAN "Pilihan tidak valid. Tidak ada perubahan yang dilakukan."
+            END SWITCH
+            
+            clearScreen()
+            TAMPILKAN "Apakah anda ingin mengubah data lagi? [y/t]"
+            INPUT jawabYt
+            IF jawabYt == "t" THEN
+                editDataSimpananRunning = false
+            ENDIF
+        ENDWHILE    
+        clearScreen()
+        TAMPILKAN "Data simpanan telah diperbarui."
+        menuSimpanan()
+    ENDIF
+END FUNCTION
+
+FUNCTION removeSimpanan()
+    IF listSimpan.isEmpty() THEN
+        TAMPILKAN "[ List simpanan kosong, silahkan tambah terlebih dahulu :) ]"
+        menuSimpanan()
+    ELSE
+        listSimpanan()
+        INPUT selRemoveSimpanan
+        
+        DEKLARASI indexRemoveData SEBAGAI integer DENGAN NILAI selRemoveSimpanan - 1
+        
+        IF indexRemoveData < 0 OR indexRemoveData >= listSimpan.size() THEN
+            clearScreen()
+            TAMPILKAN "Simpanan tidak valid. Silakan coba lagi."
+            menuSimpanan()
+        ELSE
+            listSimpan.remove(indexRemoveData)
+        ENDIF
+        
+        clearScreen()
+        menuSimpanan()
+    ENDIF
+END FUNCTION
+
+FUNCTION listPinjaman()
+    IF listPinjaman.isEmpty() THEN
+        TAMPILKAN "List pinjaman kosong, silahkan tambah terlebih dahulu :)"
+    ELSE
+        TAMPILKAN header tabel pinjaman
+        DEKLARASI totJumlahPinjaman SEBAGAI double DENGAN NILAI 0
+        DEKLARASI totJumlahTotalPinjaman SEBAGAI double DENGAN NILAI 0
+        
+        FOR i FROM 0 TO listPinjaman.size() - 1 DO
+            DEKLARASI dataPinjaman SEBAGAI Object[] DARI listPinjaman.get(i)
+            totJumlahPinjaman += (double) dataPinjaman[2]
+            totJumlahTotalPinjaman += (double) dataPinjaman[4]
+            TAMPILKAN data pinjaman
+        ENDFOR
+        
+        TAMPILKAN total pinjaman
+    ENDIF
+END FUNCTION
+
+FUNCTION menuPinjaman()
+    TAMPILKAN "====="
+    listPinjaman()
+    TAMPILKAN "====="
+    TAMPILKAN "[1] Tambah Pinjaman"
+    TAMPILKAN "[2] Edit Pinjaman"
+    TAMPILKAN "[3] Remove Pinjaman"
+    TAMPILKAN "[0] Kembali Ke Menu Utama"
+    TAMPILKAN "====="
+    TAMPILKAN ">>> "
+    
+    DEKLARASI selMenuPinjaman SEBAGAI integer DENGAN NILAI validIntInput()
+    
+    SWITCH selMenuPinjaman DO
+        CASE 1:
+            clearScreen()
+            input.nextLine()
+            addPinjaman()
+        CASE 2:
+            clearScreen()
+            editPinjaman()
+        CASE 3:
+            clearScreen()
+            removePinjaman()
+        CASE 0:
+            clearScreen()
+            mainMenu()
+        DEFAULT:
+            clearScreen()
+            TAMPILKAN "Pilihan tidak valid. Silakan coba lagi."
+            menuPinjaman()
+    END SWITCH
+END FUNCTION
+
+FUNCTION addPinjaman()
+    IF listAnggota.isEmpty() THEN
+        TAMPILKAN "[ List anggota kosong, silahkan tambah terlebih dahulu :) ]"
+        menuPinjaman()
+    ELSE
+        DEKLARASI addDataPinjamanRunning SEBAGAI boolean DENGAN NILAI true
+        
+        WHILE addDataPinjamanRunning DO
+            listAnggota()
+            INPUT selAnggotaPinjaman
+            
+            DEKLARASI indexSelAnggotaPinjaman SEBAGAI integer DENGAN NILAI selAnggotaPinjaman - 1
+            
+            IF indexSelAnggotaPinjaman < 0 OR indexSelAnggotaPinjaman >= listAnggota.size() THEN
+                clearScreen()
+                TAMPILKAN "Anggota tidak valid. Silakan coba lagi."
+                menuPinjaman()
+                RETURN
+            ENDIF
+            
+            DEKLARASI dataAnggota SEBAGAI Object[] DARI listAnggota.get(indexSelAnggotaPinjaman)
+            INPUT jumlahPinjam
+            
+            INPUT bungaPinjaman
+            
+            DEKLARASI totalPinjamanBunga SEBAGAI double DENGAN NILAI jumlahPinjam + (jumlahPinjam * bungaPinjaman / 100)
+            
+            String currentDate = formatter.format(new Date())
+            
+            DEKLARASI dataPinjaman SEBAGAI Object[] DENGAN NILAI {dataAnggota[0], dataAnggota[1], jumlahPinjam, bungaPinjaman, totalPinjamanBunga, currentDate}
+            listPinjaman.add(dataPinjaman)
+            
+            clearScreen()
+            TAMPILKAN "Apakah anda ingin menambankan data lagi? [y/t]"
+            INPUT jawabYt
+            IF jawabYt == "t" THEN
+                addDataPinjamanRunning = false
+            ENDIF
+        ENDWHILE
+        clearScreen()
+        menuPinjaman()
+    ENDIF
+END FUNCTION
+
+FUNCTION editPinjaman()
+    IF listPinjaman.isEmpty() THEN
+        TAMPILKAN "[ List pinjaman kosong, silahkan tambah terlebih dahulu :) ]"
+        menuPinjaman()
+    ELSE
+        listPinjaman()
+        INPUT selEditPinjaman
+        
+        DEKLARASI indexEditData SEBAGAI integer DENGAN NILAI selEditPinjaman - 1
+        
+        IF indexEditData < 0 OR indexEditData >= listPinjaman.size() THEN
+            clearScreen()
+            TAMPILKAN "Pinjaman tidak valid. Silakan coba lagi."
+            menuPinjaman()
+            RETURN
+        ENDIF
+        
+        DEKLARASI dataPinjaman SEBAGAI Object[] DARI listPinjaman.get(indexEditData)
+        clearScreen()
+        
+        DEKLARASI editDataPinjamanRunning SEBAGAI boolean DENGAN NILAI true
+        
+        WHILE editDataPinjamanRunning DO
+            TAMPILKAN data pinjaman yang dipilih
+            INPUT selEditAtribut
+            
+            SWITCH selEditAtribut DO
+                CASE 1:
+                    listAnggota()
+                    INPUT selAnggota
+                    DEKLARASI indexAnggota SEBAGAI integer DENGAN NILAI selAnggota - 1
+                    
+                    IF indexAnggota < 0 OR indexAnggota >= listAnggota.size() THEN
+                        TAMPILKAN "Anggota tidak valid. Tidak ada perubahan yang dilakukan."
+                    ELSE
+                        DEKLARASI dataAnggota SEBAGAI Object[] DARI listAnggota.get(indexAnggota)
+                        dataPinjaman[0] = dataAnggota[0]
+                        dataPinjaman[1] = dataAnggota[1]
+                    ENDIF
+                CASE 2:
+                    INPUT jumlahPinjaman
+                    dataPinjaman[2] = jumlahPinjaman
+                    
+                    DEKLARASI bungaPinjaman SEBAGAI double DENGAN NILAI (double) dataPinjaman[3]
+                    DEKLARASI totalPinjamanBunga SEBAGAI double DENGAN NILAI jumlahPinjaman + (jumlahPinjaman * bungaPinjaman / 100)
+                    dataPinjaman[4] = totalPinjamanBunga
+                CASE 3:
+                    INPUT bungaBaru
+                    dataPinjaman[3] = bungaBaru
+                    
+                    DEKLARASI jumlahPinjamanCurrent SEBAGAI double DENGAN NILAI (double) dataPinjaman[2]
+                    DEKLARASI totalPinjamanBungaNew SEBAGAI double DENGAN NILAI jumlahPinjamanCurrent + (jumlahPinjamanCurrent * bungaBaru / 100)
+                    dataPinjaman[4] = totalPinjamanBungaNew
+                DEFAULT:
+                    TAMPILKAN "Pilihan tidak valid. Tidak ada perubahan yang dilakukan."
+            END SWITCH
+            
+            clearScreen()
+            TAMPILKAN "Apakah anda ingin mengubah data lagi? [y/t]"
+            INPUT jawabYt
+            IF jawabYt == "t" THEN
+                editDataPinjamanRunning = false
+            ENDIF
+        ENDWHILE
+        clearScreen()
+        TAMPILKAN "Data pinjaman telah diperbarui."
+        menuPinjaman()
+    ENDIF
+END FUNCTION
+
+FUNCTION removePinjaman()
+    IF listPinjaman.isEmpty() THEN
+        TAMPILKAN "[ List pinjaman kosong, silahkan tambah terlebih dahulu :) ]"
+        menuPinjaman()
+    ELSE
+        listPinjaman()
+        INPUT selRemovePinjaman
+        
+        DEKLARASI indexRemoveData SEBAGAI integer DENGAN NILAI selRemovePinjaman - 1
+        
+        IF indexRemoveData < 0 OR indexRemoveData >= listPinjaman.size() THEN
+            clearScreen()
+            TAMPILKAN "Pinjaman tidak valid. Silakan coba lagi."
+            menuPinjaman()
+        ELSE
+            listPinjaman.remove(indexRemoveData)
+        ENDIF
+        
+        clearScreen()
+        menuPinjaman()
+    ENDIF
+END FUNCTION
+
+FUNCTION validIntInput()
+    DEKLARASI inputValue SEBAGAI integer DENGAN NILAI -1
+    DEKLARASI inputValidasi SEBAGAI boolean DENGAN NILAI false
+
+    WHILE NOT inputValidasi DO
+        TRY
+            INPUT inputValue
+            inputValidasi = true
+        CATCH InputMismatchException e
+            TAMPILKAN "Input tidak valid! Silakan masukkan angka yang sesuai."
+            INPUT ">>> "
+        ENDTRY
+    ENDWHILE
+    RETURN inputValue
+END FUNCTION
+
+FUNCTION clearScreen()
+    IF System.getProperty("os.name").contains("Windows") THEN
+        TRY
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor()
+        CATCH IOException | InterruptedException ex
+            TAMPILKAN "Error saat menghapus :("
+        ENDTRY
+    ELSE
+        TAMPILKAN "\033[H\033[2J"
+        FLUSH
+    ENDIF
+END FUNCTION
+
+FUNCTION informasiProgram()
+    TAMPILKAN "=============================="
+    TAMPILKAN "Program Simpan Pinjam v1.0"
+    TAMPILKAN "Nama    : Fauzan Priatmana"
+    TAMPILKAN "NIM     : 24.240.0027"
+    TAMPILKAN "Kelas   : 1P41"
+    TAMPILKAN "=============================="
+    TAMPILKAN "[0] Kembali Ke Menu Utama"
+    TAMPILKAN "=============================="
+    INPUT selInfoMenu
+    
+    SWITCH selInfoMenu DO
+        CASE 0:
+            clearScreen()
+            mainMenu()
+        DEFAULT:
+            clearScreen()
+            TAMPILKAN "Pilihan tidak valid. Silakan coba lagi."
+            informasiProgram()
+    END SWITCH
+END FUNCTION
+
+END PROGRAM
